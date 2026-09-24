@@ -19,3 +19,6 @@ jobs:
  
       - name: Запуск тестов
         run: npm run test
+
+      - name: Cборка
+        run: docker build -t ${{ secrets.DOCKER_USER }}/my-node-app:${{ github.sha }} .  # Сборка Docker-образа
