@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest  # Используем GitHub-hosted runner с Ubuntu
  
     steps:
-
+      - uses: actions/checkout@v3
       - name: Cборка
         run: docker build -t ${{ secrets.DOCKER_USER }}/my-node-app:${{ github.sha }} .  # Сборка Docker-образа
 
