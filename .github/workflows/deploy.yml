@@ -3,22 +3,16 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [main]  # Запускать только при пуше в ветку main
- 
+
 jobs:
-  test-build:
+  checks:
+    uses: ./.github/workflows/pr-check.yml  # Вызов внешнего workflow для проверки кода
+  
+  build:
+    needs: checks  # Зависимость от job 'checks'
     runs-on: ubuntu-latest  # Используем GitHub-hosted runner с Ubuntu
  
     steps:
-      - uses: actions/checkout@v3  # Клонирует код из репозитория
-
-      - name: Установка зависимостей
-        run: npm ci
- 
-      - name: Линтинг
-        run: npm run lint
- 
-      - name: Запуск тестов
-        run: npm run test
 
       - name: Cборка
         run: docker build -t ${{ secrets.DOCKER_USER }}/my-node-app:${{ github.sha }} .  # Сборка Docker-образа
@@ -30,7 +24,7 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USER }}/my-node-app:${{ github.sha }}
   
   deploy:
-    needs: test-build
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
